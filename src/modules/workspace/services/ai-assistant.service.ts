@@ -74,6 +74,9 @@ export class AiAssistantService {
    * @returns  A new instance of the AzureOpenAI client.
    */
   private getClient = (): AzureOpenAI => {
+    if (!this.endpoint || !this.apiVersion || !this.apiKey) {
+      return;
+    }
     const assistantsClient = new AzureOpenAI({
       endpoint: this.endpoint,
       apiVersion: this.apiVersion,
@@ -89,6 +92,11 @@ export class AiAssistantService {
    * @throws BadRequestException if the assistant cannot be created.
    */
   private createAssistant = async (_instructions: string): Promise<string> => {
+    if (!this.assistantsClient || !this.deployment) {
+      throw new BadRequestException(
+        "Azure Open AI is not connected to backend server.",
+      );
+    }
     const options: AssistantCreateParams = {
       model: this.deployment,
       name: this.assistant.name,
@@ -115,7 +123,7 @@ export class AiAssistantService {
     if (
       stat?.tokenStats &&
       stat.tokenStats?.yearMonth === currentYearMonth &&
-      stat.tokenStats.tokenUsage > this.monthlyTokenLimit
+      stat.tokenStats.tokenUsage > (this.monthlyTokenLimit || 0)
     ) {
       throw new BadRequestException("Limit reached");
     }
@@ -150,7 +158,7 @@ export class AiAssistantService {
         currentThreadId,
         {
           assistant_id: assistantId,
-          max_completion_tokens: this.maxTokens,
+          max_completion_tokens: this.maxTokens || 0,
         },
         { pollIntervalMs: 500 },
       );
@@ -245,7 +253,7 @@ export class AiAssistantService {
       currentThreadId,
       {
         assistant_id: assistantId,
-        max_completion_tokens: this.maxTokens,
+        max_completion_tokens: this.maxTokens || 0,
       },
     );
     let total_tokens = 0;

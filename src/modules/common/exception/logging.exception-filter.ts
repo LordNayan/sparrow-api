@@ -29,15 +29,16 @@ export class LoggingExceptionsFilter implements ExceptionFilter {
       error.stack = exception.stack;
       // Log exception to Application Insights
       const client = this.insightsService.getClient();
-      client.trackException({
-        exception: error,
-        properties: {
-          method: req.method,
-          url: req.url,
-          status,
-        },
-      });
-
+      if (client) {
+        client.trackException({
+          exception: error,
+          properties: {
+            method: req.method,
+            url: req.url,
+            status,
+          },
+        });
+      }
       return response.status(status).send({
         statusCode: status,
         message: exception.message,

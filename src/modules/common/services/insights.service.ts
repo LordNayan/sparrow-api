@@ -22,9 +22,12 @@ export class InsightsService {
    */
   constructor(private configService: ConfigService) {
     // Ensure Application Insights is initialized only once
-    if (!this.client) {
+    const azureInsightsConnectionString = this.configService.get(
+      "azure.insightsConnectionString",
+    );
+    if (!this.client && azureInsightsConnectionString) {
       appInsights
-        .setup(this.configService.get("azure.insightsConnectionString"))
+        .setup(azureInsightsConnectionString)
         .setAutoDependencyCorrelation(true)
         .setAutoCollectRequests(true)
         .setAutoCollectPerformance(true, true)

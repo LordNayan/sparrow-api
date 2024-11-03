@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 // ---- Third Party Libraries
@@ -28,18 +28,20 @@ export class BlobStorageService {
     const feedbackBlobContainer = this.configService.get(
       "feedbackBlob.container",
     );
-    /**
-     * Create an instance of BlobServiceClient using the connection string.
-     */
-    this.blobServiceClient = BlobServiceClient.fromConnectionString(
-      AZURE_STORAGE_CONNECTION_STRING,
-    );
-    /**
-     * Get a ContainerClient instance for the 'feedbackfiles' container.
-     */
-    this.containerClient = this.blobServiceClient.getContainerClient(
-      feedbackBlobContainer,
-    );
+    if (AZURE_STORAGE_CONNECTION_STRING && feedbackBlobContainer) {
+      /**
+       * Create an instance of BlobServiceClient using the connection string.
+       */
+      this.blobServiceClient = BlobServiceClient.fromConnectionString(
+        AZURE_STORAGE_CONNECTION_STRING,
+      );
+      /**
+       * Get a ContainerClient instance for the 'feedbackfiles' container.
+       */
+      this.containerClient = this.blobServiceClient.getContainerClient(
+        feedbackBlobContainer,
+      );
+    }
   }
 
   /**
@@ -65,6 +67,11 @@ export class BlobStorageService {
     const uniqueFileName = `${fileId}-${
       file.fieldname
     }.${await this.getFileExtension(file.mimetype)}`;
+    if (!this.containerClient) {
+      throw new BadRequestException(
+        "Azure blob container is not connected to backend server.",
+      );
+    }
     const blockBlobClient =
       this.containerClient.getBlockBlobClient(uniqueFileName);
 
