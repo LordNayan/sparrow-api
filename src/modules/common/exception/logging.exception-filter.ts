@@ -30,14 +30,18 @@ export class LoggingExceptionsFilter implements ExceptionFilter {
       // Log exception to Application Insights
       const client = this.insightsService.getClient();
       if (client) {
-        client.trackException({
-          exception: error,
-          properties: {
-            method: req.method,
-            url: req.url,
-            status,
-          },
-        });
+        try {
+          client?.trackException({
+            exception: error,
+            properties: {
+              method: req.method,
+              url: req.url,
+              status,
+            },
+          });
+        } catch (e) {
+          console.error(e);
+        }
       } else {
         console.error("Application Insights client is not initialized.");
       }
