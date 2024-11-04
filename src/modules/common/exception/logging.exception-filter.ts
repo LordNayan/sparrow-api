@@ -38,6 +38,8 @@ export class LoggingExceptionsFilter implements ExceptionFilter {
             status,
           },
         });
+      } else {
+        console.error("Application Insights client is not initialized.");
       }
       return response.status(status).send({
         statusCode: status,

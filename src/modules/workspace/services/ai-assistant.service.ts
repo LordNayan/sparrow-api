@@ -65,7 +65,11 @@ export class AiAssistantService {
     this.monthlyTokenLimit = this.configService.get("ai.monthlyTokenLimit");
 
     // Initialize the AzureOpenAI client
-    this.assistantsClient = this.getClient();
+    try {
+      this.assistantsClient = this.getClient();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   /**
@@ -74,9 +78,6 @@ export class AiAssistantService {
    * @returns  A new instance of the AzureOpenAI client.
    */
   private getClient = (): AzureOpenAI => {
-    if (!this.endpoint || !this.apiVersion || !this.apiKey) {
-      return;
-    }
     const assistantsClient = new AzureOpenAI({
       endpoint: this.endpoint,
       apiVersion: this.apiVersion,
@@ -92,11 +93,6 @@ export class AiAssistantService {
    * @throws BadRequestException if the assistant cannot be created.
    */
   private createAssistant = async (_instructions: string): Promise<string> => {
-    if (!this.assistantsClient || !this.deployment) {
-      throw new BadRequestException(
-        "Azure Open AI is not connected to backend server.",
-      );
-    }
     const options: AssistantCreateParams = {
       model: this.deployment,
       name: this.assistant.name,
