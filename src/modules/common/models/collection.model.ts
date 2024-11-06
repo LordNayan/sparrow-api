@@ -326,6 +326,11 @@ export class SocketIOMetaData {
   @IsOptional()
   message?: string;
 
+  @ApiProperty({ example: "eventName" })
+  @IsString()
+  @IsOptional()
+  eventName?: string;
+
   @ApiProperty({
     enum: ["application/json", "application/xml", "text/plain", "text/html"],
   })
