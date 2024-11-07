@@ -230,6 +230,11 @@ export class CollectionSocketIOMetaData {
   @IsOptional()
   message?: string;
 
+  @ApiProperty({ example: "eventName" })
+  @IsString()
+  @IsOptional()
+  eventName?: string;
+
   @ApiProperty({
     type: [KeyValue],
     example: {

@@ -579,7 +579,9 @@ export class CollectionRequestService {
     const collectionData = await this.collectionReposistory.getCollection(
       websocket.collectionId,
     );
-    const updateMessage = `WebSocket "${websocket?.items?.name}" is updated under "${collectionData.name}" collection`;
+    const updateMessage = `WebSocket "${
+      websocket?.items?.name ?? websocket?.items?.items?.name
+    }" is updated under "${collectionData.name}" collection`;
     await this.producerService.produce(TOPIC.UPDATES_ADDED_TOPIC, {
       value: JSON.stringify({
         message: updateMessage,
@@ -736,7 +738,9 @@ export class CollectionRequestService {
     const collectionData = await this.collectionReposistory.getCollection(
       socketio.collectionId,
     );
-    const updateMessage = `Socket.IO "${socketio?.items?.name}" is updated under "${collectionData.name}" collection`;
+    const updateMessage = `Socket.IO "${
+      socketio?.items?.name ?? socketio?.items?.items?.name
+    }" is updated under "${collectionData.name}" collection`;
     await this.producerService.produce(TOPIC.UPDATES_ADDED_TOPIC, {
       value: JSON.stringify({
         message: updateMessage,
