@@ -187,11 +187,23 @@ export class TeamService {
         "The user with this id does not exist in the system",
       );
     }
+    const userWorkspaceIds = user.workspaces.map((_workspace) => {
+      return _workspace.workspaceId;
+    });
+
     const teams: WithId<Team>[] = [];
     for (const { id } of user.teams) {
       const teamData: WithId<TeamWithNewInviteTag> = await this.get(
         id.toString(),
       );
+
+      teamData.workspaces = teamData.workspaces.filter((_workspace) => {
+        if (userWorkspaceIds.includes(_workspace.id.toString())) {
+          return true;
+        }
+        return false;
+      });
+
       user.teams.forEach((team) => {
         if (team.id.toString() === teamData._id.toString()) {
           teamData.isNewInvite = team?.isNewInvite;
