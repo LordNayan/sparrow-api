@@ -1,5 +1,11 @@
 import { Type } from "class-transformer";
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
 
 export enum Env {
   DEV = "DEV",
@@ -89,11 +95,14 @@ export class EnvironmentVariables {
   KAFKA_BROKER: string;
 
   @IsString()
+  @IsOptional()
   AZURE_CONNECTION_STRING: string;
 
   @IsString()
+  @IsOptional()
   FEEDBACK_BLOB_CONTAINER: string;
 
   @IsString()
+  @IsOptional()
   AZURE_INSIGHTS_CONNECTION_STRING: string;
 }
