@@ -32,20 +32,15 @@ export class BlobStorageService {
       /**
        * Create an instance of BlobServiceClient using the connection string.
        */
-      if (
-        AZURE_STORAGE_CONNECTION_STRING.length &&
-        feedbackBlobContainer.length
-      ) {
-        this.blobServiceClient = BlobServiceClient.fromConnectionString(
-          AZURE_STORAGE_CONNECTION_STRING,
-        );
-        /**
-         * Get a ContainerClient instance for the 'feedbackfiles' container.
-         */
-        this.containerClient = this.blobServiceClient.getContainerClient(
-          feedbackBlobContainer,
-        );
-      }
+      this.blobServiceClient = BlobServiceClient.fromConnectionString(
+        AZURE_STORAGE_CONNECTION_STRING,
+      );
+      /**
+       * Get a ContainerClient instance for the 'feedbackfiles' container.
+       */
+      this.containerClient = this.blobServiceClient.getContainerClient(
+        feedbackBlobContainer,
+      );
     } catch (e) {
       console.error(e);
     }
