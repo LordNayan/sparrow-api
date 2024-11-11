@@ -25,7 +25,7 @@ export class InsightsService {
     const azureInsightsConnectionString = this.configService.get(
       "azure.insightsConnectionString",
     );
-    if (!this.client) {
+    if (!this.client && azureInsightsConnectionString.length) {
       try {
         appInsights
           .setup(azureInsightsConnectionString)
