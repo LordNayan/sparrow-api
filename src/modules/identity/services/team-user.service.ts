@@ -87,7 +87,7 @@ export class TeamUserService {
             "support.sparrowWebsiteName",
           ),
         },
-        subject: `Welcome to the ${payload.teamName} team on Sparrow!`,
+        subject: `Welcome to ${payload.teamName} team on Sparrow!`,
       };
       promiseArray.push(transporter.sendMail(mailOptions));
     }
