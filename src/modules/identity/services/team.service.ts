@@ -192,7 +192,7 @@ export class TeamService {
     });
 
     const teams: WithId<Team>[] = [];
-    for (const { id } of user.teams) {
+    for (const { id, isNewInvite } of user.teams) {
       const teamData: WithId<TeamWithNewInviteTag> = await this.get(
         id.toString(),
       );
@@ -204,11 +204,8 @@ export class TeamService {
         return false;
       });
 
-      user.teams.forEach((team) => {
-        if (team.id.toString() === teamData._id.toString()) {
-          teamData.isNewInvite = team?.isNewInvite;
-        }
-      });
+      teamData.isNewInvite = isNewInvite;
+
       teams.push(teamData);
     }
     return teams;
