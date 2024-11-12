@@ -779,7 +779,7 @@ export class TeamUserService {
           "support.sparrowWebsiteName",
         ),
       },
-      subject: `Your Role in the ${teamName} team has been updated.`,
+      subject: `Your Role in ${teamName} team has been updated.`,
     };
 
     const promise = [transporter.sendMail(mailOptions)];
@@ -817,7 +817,7 @@ export class TeamUserService {
           "support.sparrowWebsiteName",
         ),
       },
-      subject: `Your Role in the ${teamName} team has been updated.`,
+      subject: `Your Role in ${teamName} team has been updated.`,
     };
 
     const promise = [transporter.sendMail(mailOptions)];
