@@ -268,6 +268,15 @@ export class TeamService {
       teams,
     });
     const teamDetails = await this.teamRepository.get(teamId);
+    const userWorkspaceIds = user.workspaces.map((_workspace) => {
+      return _workspace.workspaceId;
+    });
+    teamDetails.workspaces = teamDetails.workspaces.filter((_workspace) => {
+      if (userWorkspaceIds.includes(_workspace.id.toString())) {
+        return true;
+      }
+      return false;
+    });
     return teamDetails;
   }
 }
