@@ -13,7 +13,7 @@ interface CustomWebSocket extends WebSocket {
   query?: Record<string, any>;
 }
 
-@WSGateway({ path: "/ws" })
+@WSGateway({ path: "/ws", cors: true })
 export class WebSocketGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {

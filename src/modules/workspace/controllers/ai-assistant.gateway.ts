@@ -17,14 +17,7 @@ import { StreamPromptPayload } from "../payloads/ai-assistant.payload";
  * Handles WebSocket connections, disconnections, and incoming messages
  * for the AI Assistant service.
  */
-@WebSocketGateway({
-  namespace: "/ai-assistant",
-  cors: {
-    origin: "*",
-  },
-  transports: ["websocket"],
-  methods: ["GET", "POST"],
-})
+@WebSocketGateway({ path: "/ai-assistant" })
 export class AiAssistantGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -78,14 +71,7 @@ export class AiAssistantGateway
   }
 }
 
-@WebSocketGateway({
-  namespace: "/dummy",
-  cors: {
-    origin: "*",
-  },
-  transports: ["websocket"],
-  methods: ["GET", "POST"],
-})
+@WebSocketGateway({ path: "/dummy" })
 export class DummyGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {

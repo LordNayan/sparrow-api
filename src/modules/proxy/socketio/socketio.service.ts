@@ -11,7 +11,7 @@ export class SocketIoService {
    */
   async connectToRealSocket(
     tabid: string,
-    url: string,
+    targetUrl: string,
     namespace: string,
     headers: Record<string, string> = {},
   ): Promise<void> {
@@ -19,7 +19,7 @@ export class SocketIoService {
       throw new Error(`TabID=${tabid} is already connected`);
     }
 
-    const realSocket = io(`${url}${namespace}`, {
+    const realSocket = io(`${targetUrl}${namespace}`, {
       transports: ["websocket"],
       extraHeaders: headers,
     });

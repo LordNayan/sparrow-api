@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { HttpService } from "./http.service";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiBearerAuth()
 @ApiTags("proxy")
@@ -18,6 +18,41 @@ export class HttpController {
   constructor(private readonly httpService: HttpService) {}
 
   @Post("http-request")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        url: {
+          type: "string",
+          description: "The URL to which the request will be sent",
+          example: "https://api.example.com/resource",
+        },
+        method: {
+          type: "string",
+          description: "HTTP method to be used (GET, POST, etc.)",
+          example: "POST",
+        },
+        headers: {
+          type: "string",
+          description: "JSON string representing an array of header objects",
+          example: `[ 
+            { "key": "Authorization", "value": "Bearer your-token-here", "checked": true }, 
+            { "key": "Content-Type", "value": "application/json", "checked": true }
+          ]`,
+        },
+        body: {
+          type: "string",
+          description: "Request payload, format varies by contentType",
+          example: `"{ \"key1\": \"value1\", \"key2\": \"value2\" }"`,
+        },
+        contentType: {
+          type: "string",
+          description: "The content type of the request body",
+          example: "application/json",
+        },
+      },
+    },
+  })
   @ApiOperation({
     summary: "Proxy to route HTTP requests",
     description: `This will help address CORS error encountered when requests are made directly from a browser agent.

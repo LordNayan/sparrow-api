@@ -7,7 +7,7 @@ import {
 import { Server, Socket } from "socket.io";
 import { SocketIoService } from "./socketio.service";
 
-@WebSocketGateway({ path: "/socketio" })
+@WebSocketGateway()
 export class SocketIoGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
@@ -20,9 +20,9 @@ export class SocketIoGateway
    * Handle WebSocket connection from the frontend with `tabid`.
    */
   async handleConnection(client: Socket) {
-    const { url, namespace, tabid, headers } = client.handshake.query;
+    const { targetUrl, namespace, tabid, headers } = client.handshake.query;
 
-    if (!url || !namespace || !tabid) {
+    if (!targetUrl || !namespace || !tabid) {
       client.disconnect();
       console.error(
         "Missing required query parameters: url, namespace, or tabid",
@@ -39,7 +39,7 @@ export class SocketIoGateway
       // Connect to the real Socket.IO server
       await this.socketIoService.connectToRealSocket(
         tabid as string,
-        url as string,
+        targetUrl as string,
         namespace as string,
         parsedHeaders,
       );

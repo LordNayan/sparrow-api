@@ -11,6 +11,8 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import fastyfyMultipart from "@fastify/multipart";
 import { FastifyInstance } from "fastify";
 import { ValidationError } from "class-validator";
+import { WsAdapter } from "@nestjs/platform-ws";
+
 /**
  * The url endpoint for open api ui
  * @type {string}
@@ -49,6 +51,9 @@ const { PORT } = process.env;
     AppModule,
     new FastifyAdapter({ logger: true, bodyLimit: 50 * 1024 * 1024 }), // Set logger and body limit
   );
+
+  // Set the default adapter to IoAdapter
+  app.useWebSocketAdapter(new WsAdapter(app));
 
   // Configure Swagger options for API documentation
   const options = new DocumentBuilder()
