@@ -7,7 +7,13 @@ import {
 import { Server, Socket } from "socket.io";
 import { SocketIoService } from "./socketio.service";
 
-@WebSocketGateway()
+export const SOCKET_IO_PORT = 9001;
+
+@WebSocketGateway(SOCKET_IO_PORT, {
+  cors: true,
+  path: "/socket.io",
+  transports: ["websocket"],
+})
 export class SocketIoGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
@@ -15,6 +21,13 @@ export class SocketIoGateway
   server: Server;
 
   constructor(private readonly socketIoService: SocketIoService) {}
+
+  /**
+   * Lifecycle hook that runs when the WebSocket gateway is initialized.
+   */
+  async afterInit() {
+    console.log("Socket.io Handler Gateway initialized!");
+  }
 
   /**
    * Handle WebSocket connection from the frontend with `tabid`.

@@ -17,6 +17,7 @@ export class SocketIoService {
   ): Promise<void> {
     if (this.realSocketClients.has(tabid)) {
       throw new Error(`TabID=${tabid} is already connected`);
+      // this.disconnectFromRealSocket(tabid);
     }
 
     const realSocket = io(`${targetUrl}${namespace}`, {

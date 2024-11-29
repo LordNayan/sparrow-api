@@ -11,7 +11,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import fastyfyMultipart from "@fastify/multipart";
 import { FastifyInstance } from "fastify";
 import { ValidationError } from "class-validator";
-import { WsAdapter } from "@nestjs/platform-ws";
+import { CustomWebSocketAdapter } from "./modules/proxy/adapters/custom-websocket-adapter";
 
 /**
  * The url endpoint for open api ui
@@ -52,8 +52,8 @@ const { PORT } = process.env;
     new FastifyAdapter({ logger: true, bodyLimit: 50 * 1024 * 1024 }), // Set logger and body limit
   );
 
-  // Set the default adapter to IoAdapter
-  app.useWebSocketAdapter(new WsAdapter(app));
+  // Use the custom WebSocket adapter to handle both WS and SocketIo
+  app.useWebSocketAdapter(new CustomWebSocketAdapter(app));
 
   // Configure Swagger options for API documentation
   const options = new DocumentBuilder()
