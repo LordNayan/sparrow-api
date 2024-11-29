@@ -7,9 +7,9 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
-import { HttpService } from "./http.service";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { HttpService } from "../services/http.service";
 
 @ApiBearerAuth()
 @ApiTags("proxy")

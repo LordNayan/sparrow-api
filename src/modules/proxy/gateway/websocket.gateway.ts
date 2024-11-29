@@ -5,8 +5,11 @@ import {
   OnGatewayDisconnect,
 } from "@nestjs/websockets";
 import { WebSocketServer as WsServer, WebSocket } from "ws";
-import { WebSocketService, WebsocketEvent } from "./websocket.service";
 import * as url from "url";
+import {
+  WebsocketEvent,
+  WebSocketService,
+} from "../services/websocket.service";
 
 // Extend WebSocket to include custom properties
 interface CustomWebSocket extends WebSocket {

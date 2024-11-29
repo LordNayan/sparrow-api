@@ -5,7 +5,7 @@ import {
   OnGatewayDisconnect,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
-import { SocketIoService } from "./socketio.service";
+import { SocketIoService } from "../services/socketio.service";
 
 export const SOCKET_IO_PORT = 9001;
 
