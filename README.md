@@ -30,66 +30,88 @@ One-stop API management tool
 Sparrow is your next go to API development buddy which can help you test, debug, distribute better APIs while collaborating with your colleagues and making you a better programmer.
  
 ## <a name="installation">🔨 Installation</a>
- 
-To install this project, you must have the following installed on your machine :
+
+### Prerequisite
 
 ![Docker](https://img.shields.io/badge/-Docker-black?style=for-the-badge&logoColor=white&logo=docker&color=2496ED)
 ![NODE](https://img.shields.io/badge/-Node.js-black?style=for-the-badge&logoColor=white&logo=nodedotjs&color=339933)
 ![NPM](https://img.shields.io/badge/-NPM-black?style=for-the-badge&logoColor=white&logo=npm&color=CB3837)
- 
-Then, run the following commands :
- 
+![PNPM](https://img.shields.io/badge/-PNPM-black?style=for-the-badge&logoColor=white&logo=pnpm&color=CB3837)
+
 ```bash
 # Clone the repository
+
 git clone https://github.com/techdome-io/sparrow-api.git
- 
+
 # Move into the project directory
+
 cd sparrow-api
-
-# Install PNPM globally
-npm i -g pnpm
-
-# Setup required components locally - Mongo, Kafka (Wait for 3-5 minutes after running this command)
-pnpm docker:up
-
-# Insatll dependencies
-pnpm i
-
-# Copy .env file
-cp .env.example .env
-
-# Run App in development mode
-pnpm start:dev
-
-# Access swagger on localhost
-Go to http://localhost/api/docs
-
-#[OPTIONAL] In case you want to remove the local components, run the below command 
-pnpm docker:down
-
 ```
- 
+
+### Docker Compose Method
+
+---
+
+#### Run docker compose
+
+`pnpm docker:up`
+
+#### Wait for a minute for server to start
+
+`wait 60 seconds`
+
+### Local Method
+
+---
+
+#### Install dependencies
+
+`pnpm i`
+
+#### Copy .env file
+
+`cp .env.example .env`
+
+#### Run App in development mode
+
+`pnpm start:dev`
+
+### Access your api and mongo
+
+---
+
 The above will start the app in development mode and watch for changes on local.
 
+#### Access swagger on localhost
+
+` http://localhost:9000/api/docs`
+
+#### Mongo can be accessed using
+
+`mongodb://sparowapp:sparrow123@localhost:27017`
+
 ### 📝 Note
+
 ---
-1) "pnpm docker:up" command will expose the below components on respective ports, make sure you have those ports free on your system 
 
-	- 27017 (Mongo)
-	- 2181 (Zookeeper)
-	- 29092, 9092, 9101 (Kafka)
+1. `pnpm docker:up` command will expose the below components on respective ports, make sure you have those ports free on your system
 
-2) Wait for 3-5 minutes after running "pnpm docker:up", so that kafka can initiate properly.
- 
+   - 27017 (Mongo)
+   - 9092 (Kafka)
+   - 9000 (API Server)
+
+2. Wait for 1 minute after running "pnpm docker:up", so that kafka can initiate properly.
+
+3. Run `pnpm docker:down` command to remove all docker containers.
 
 ## <a name="contributors">❤️ How to Contribue ?</a>
 
 You can checkout [Contributing Guidelines](./docs/CONTRIBUTING.md)
- 
+
 ## <a name="subscribe-to-our-newsletter">📨 Newsletter</a>
- 
-Subscribe to our newsletter by applying [here!](https://sparrows-newsletter.beehiiv.com/subscribe) 
- 
+
+Subscribe to our newsletter by applying [here!](https://sparrows-newsletter.beehiiv.com/subscribe)
+
 ## <a name="license">©️ License</a>
 
 Sparrow comes under the GNU AFFERO GENERAL PUBLIC LICENSE. For more information, you can checkout [LICENSE](./LICENSE)
