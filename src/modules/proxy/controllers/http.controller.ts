@@ -76,12 +76,7 @@ export class HttpController {
         contentType,
       });
 
-      // Set the response headers and status
-      Object.entries(response.headers).forEach(([key, value]) => {
-        res.header(key, value as string);
-      });
-
-      res.status(response.status).send(response.data);
+      return res.status(HttpStatus.OK).send(response);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_GATEWAY);
     }
