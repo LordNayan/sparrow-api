@@ -9,7 +9,6 @@ import { AppModule } from "@app/app.module";
 import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import fastyfyMultipart from "@fastify/multipart";
-import { FastifyInstance } from "fastify";
 import { ValidationError } from "class-validator";
 /**
  * The url endpoint for open api ui
@@ -66,14 +65,14 @@ const { PORT } = process.env;
   app.enableCors();
 
   // Register additional Fastify plugins
-  app.register(headers);
-  app.register(fastifyRateLimiter, {
+  app.register(() => headers);
+  app.register(() => fastifyRateLimiter, {
     max: 100,
     timeWindow: 60000,
   });
 
   // Get the underlying FastifyInstance for additional customizations
-  const fastifyInstance: FastifyInstance = app.getHttpAdapter().getInstance();
+  const fastifyInstance = app.getHttpAdapter().getInstance();
 
   // Extend Fastify reply with custom methods
   fastifyInstance
@@ -96,7 +95,7 @@ const { PORT } = process.env;
     }),
   );
   // Register multipart form data handling for file uploads with increased limits
-  app.register(fastyfyMultipart, {
+  app.register(() => fastyfyMultipart, {
     limits: {
       fileSize: 50 * 1024 * 1024, // Set file size limit to 50MB
     },
