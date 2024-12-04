@@ -44,13 +44,13 @@ import { PostmanParserService } from "./services/postman.parser.service";
         } catch (e) {
           const client = await insightsService.getClient();
           if (client) {
-            client.trackException({
-              exception: e,
-              properties: {
-                status: 500,
-                message: "MongoDB connection failure",
-              },
-            });
+            // client.trackException({
+            //   exception: e,
+            //   properties: {
+            //     status: 500,
+            //     message: "MongoDB connection failure",
+            //   },
+            // });
           } else {
             console.error("Application Insights client is not initialized.");
           }
