@@ -41,7 +41,7 @@ COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 USER node
 
 # Expose application port (optional, specify the port your app uses)
-EXPOSE 9000
+EXPOSE 9000 9001 9002
 
 # Start the server
 CMD ["node", "dist/src/main.js"]

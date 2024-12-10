@@ -22,7 +22,7 @@ export class LoggingExceptionsFilter implements ExceptionFilter {
       const response = ctx.getResponse<FastifyReply>();
       const status = exception.getStatus();
       this.errorLogger.error(exception);
-      // const req = ctx.getRequest();
+      const req = ctx.getRequest();
       // Create a standard Error object
       const error = new Error(exception.message);
       error.name = exception.name;
@@ -31,14 +31,14 @@ export class LoggingExceptionsFilter implements ExceptionFilter {
       const client = this.insightsService.getClient();
       if (client) {
         try {
-          // client?.trackException({
-          //   exception: error,
-          //   properties: {
-          //     method: req.method,
-          //     url: req.url,
-          //     status,
-          //   },
-          // });
+          client?.trackException({
+            exception: error,
+            properties: {
+              method: req.method,
+              url: req.url,
+              status,
+            },
+          });
         } catch (e) {
           console.error(e);
         }

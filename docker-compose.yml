@@ -47,6 +47,8 @@ services:
       context: .
     ports:
       - "9000:9000"
+      - "9001:9001"
+      - "9002:9002"
     volumes:
       - ./:/src
     networks:
