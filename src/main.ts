@@ -3,30 +3,34 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from "@nestjs/platform-fastify";
-import headers from "@fastify/helmet";
+import helmet from "@fastify/helmet";
 import fastifyRateLimiter from "@fastify/rate-limit";
+import fastifyMultipart from "@fastify/multipart";
 import { AppModule } from "@app/app.module";
 import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
-import fastyfyMultipart from "@fastify/multipart";
 import { ValidationError } from "class-validator";
+
 /**
- * The url endpoint for open api ui
+ * The URL endpoint for OpenAPI UI.
  * @type {string}
  */
 export const SWAGGER_API_ROOT = "api/docs";
+
 /**
- * The name of the api
+ * The name of the API.
  * @type {string}
  */
 export const SWAGGER_API_NAME = "API";
+
 /**
- * A short description of the api
+ * A short description of the API.
  * @type {string}
  */
 export const SWAGGER_API_DESCRIPTION = "API Description";
+
 /**
- * Current version of the api
+ * Current version of the API.
  * @type {string}
  */
 export const SWAGGER_API_CURRENT_VERSION = "1.0";
@@ -39,8 +43,6 @@ const { PORT } = process.env;
 
 /**
  * Initializes and configures the NestJS application.
- * Function sets up routes, Swagger documentation, CORS, rate limiting,
- * global validation pipes, multipart form data handling, and starts the server.
  */
 (async () => {
   // Create the NestJS application with Fastify adapter
@@ -65,23 +67,16 @@ const { PORT } = process.env;
   app.enableCors();
 
   // Register additional Fastify plugins
-  app.register(headers);
-  app.register(fastifyRateLimiter, {
+  await app.register(helmet as any); // Cast to 'any' for compatibility
+  await app.register(fastifyRateLimiter as any, {
     max: 100,
     timeWindow: 60000,
   });
-
-  // Get the underlying FastifyInstance for additional customizations
-  const fastifyInstance = app.getHttpAdapter().getInstance();
-
-  // Extend Fastify reply with custom methods
-  fastifyInstance
-    .decorateReply("setHeader", function (name: string, value: unknown) {
-      this.header(name, value); // Set HTTP response header
-    })
-    .decorateReply("end", function () {
-      this.send(""); // End response with an empty body
-    });
+  await app.register(fastifyMultipart as any, {
+    limits: {
+      fileSize: 50 * 1024 * 1024, // Set file size limit to 50MB
+    },
+  });
 
   // Apply global validation pipe for request validation
   app.useGlobalPipes(
@@ -94,13 +89,7 @@ const { PORT } = process.env;
       },
     }),
   );
-  // Register multipart form data handling for file uploads with increased limits
-  app.register(fastyfyMultipart, {
-    limits: {
-      fileSize: 50 * 1024 * 1024, // Set file size limit to 50MB
-    },
-  });
 
   // Start the server and listen on all available network interfaces
-  await app.listen({ port: +PORT });
+  await app.listen({ port: +PORT || 9000, host: "0.0.0.0" });
 })();
