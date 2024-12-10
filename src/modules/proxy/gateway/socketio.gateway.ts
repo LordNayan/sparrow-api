@@ -10,32 +10,29 @@ import { SocketIoService } from "../services/socketio.service";
 export const SOCKET_IO_PORT = 9001;
 
 @WebSocketGateway(SOCKET_IO_PORT, {
-  cors: true,
+  cors: {
+    origin: "*", // Replace "*" with your frontend URL in production
+    methods: ["GET", "POST"],
+  },
   path: "/socket.io",
   transports: ["websocket"],
 })
-export class SocketIoGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+export class SocketIoGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
+  private clientSockets = new Map<Socket, any>();
+
   constructor(private readonly socketIoService: SocketIoService) {}
 
-  /**
-   * Lifecycle hook that runs when the WebSocket gateway is initialized.
-   */
   async afterInit() {
     console.log("Socket.io Handler Gateway initialized!");
   }
 
-  /**
-   * Handle WebSocket connection from the frontend with `tabid`.
-   */
   async handleConnection(client: Socket) {
-    const { targetUrl, namespace, tabid, headers } = client.handshake.query;
+    const { targetUrl, namespace, headers } = client.handshake.query;
 
-    if (!targetUrl || !namespace || !tabid) {
+    if (!targetUrl || !namespace) {
       client.disconnect();
       console.error(
         "Missing required query parameters: url, namespace, or tabid",
@@ -46,60 +43,40 @@ export class SocketIoGateway
     try {
       const parsedHeaders = headers ? JSON.parse(headers as string) : {};
 
-      // Register frontend client
-      this.socketIoService.registerFrontendClient(tabid as string, client);
-
-      // Connect to the real Socket.IO server
-      await this.socketIoService.connectToRealSocket(
-        tabid as string,
+      // Establish a connection to the real Socket.IO server
+      const targetSocketIO = await this.socketIoService.connectToRealSocket(
+        client,
         targetUrl as string,
         namespace as string,
         parsedHeaders,
       );
 
-      console.log(`Proxy connection established for TabID=${tabid}`);
+      // Store the target socket for this client
+      this.clientSockets.set(client, targetSocketIO);
 
       // Listen for all dynamic events from the frontend and forward them
       client.onAny(async (event: string, ...args: any[]) => {
-        console.log(
-          `Received event from frontend for TabID=${tabid}: ${event}`,
-          args,
-        );
-
         try {
-          // Forward the dynamic event and its arguments to the real server
-          await this.socketIoService.emitToRealSocket(
-            tabid as string,
-            event,
-            args,
-          );
+          targetSocketIO.emit(event, ...args);
         } catch (err) {
           console.error(
-            `Failed to forward event ${event} for TabID=${tabid}: ${err.message}`,
+            `Failed to forward event ${event} for ${err.message}`,
           );
         }
       });
     } catch (err) {
       console.error(
-        `Failed to connect to real Socket.IO server for TabID=${tabid}: ${err.message}`,
+        `Failed to connect to real Socket.IO server for ${err.message}`,
       );
       client.disconnect();
     }
   }
 
-  /**
-   * Handle WebSocket disconnection for a specific `tabid`.
-   */
   async handleDisconnect(client: Socket) {
-    const { tabid } = client.handshake.query;
-
-    if (!tabid) {
-      console.error("TabID missing on disconnection");
-      return;
+    const targetSocketIO = this.clientSockets.get(client);
+    if (targetSocketIO) {
+      targetSocketIO.disconnect();
+      this.clientSockets.delete(client);
     }
-
-    console.log(`Proxy connection closed for TabID=${tabid}`);
-    await this.socketIoService.disconnectFromRealSocket(tabid as string);
-    this.socketIoService.unregisterFrontendClient(tabid as string);
   }
 }
