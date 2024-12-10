@@ -10,6 +10,7 @@ import { AppModule } from "@app/app.module";
 import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { ValidationError } from "class-validator";
+import { CustomWebSocketAdapter } from "./modules/proxy/adapters/custom-websocket-adapter";
 
 /**
  * The URL endpoint for OpenAPI UI.
@@ -50,6 +51,9 @@ const { PORT } = process.env;
     AppModule,
     new FastifyAdapter({ logger: true, bodyLimit: 50 * 1024 * 1024 }), // Set logger and body limit
   );
+
+  // Use the custom WebSocket adapter to handle both WS and SocketIo
+  app.useWebSocketAdapter(new CustomWebSocketAdapter(app));
 
   // Configure Swagger options for API documentation
   const options = new DocumentBuilder()
