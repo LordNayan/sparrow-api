@@ -65,8 +65,8 @@ const { PORT } = process.env;
   app.enableCors();
 
   // Register additional Fastify plugins
-  app.register(() => headers);
-  app.register(() => fastifyRateLimiter, {
+  app.register(headers);
+  app.register(fastifyRateLimiter, {
     max: 100,
     timeWindow: 60000,
   });
@@ -95,12 +95,12 @@ const { PORT } = process.env;
     }),
   );
   // Register multipart form data handling for file uploads with increased limits
-  app.register(() => fastyfyMultipart, {
+  app.register(fastyfyMultipart, {
     limits: {
       fileSize: 50 * 1024 * 1024, // Set file size limit to 50MB
     },
   });
 
   // Start the server and listen on all available network interfaces
-  await app.listen(PORT, "0.0.0.0");
+  await app.listen({ port: +PORT });
 })();
