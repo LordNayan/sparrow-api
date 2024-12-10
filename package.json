@@ -22,7 +22,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles --forceExit",
     "prepare": "husky install",
     "docker:up": "docker compose up --build -d",
-    "docker:down": "docker compose down"
+    "docker:down": "docker compose down",
+    "docker:up:mongo": "docker compose up mongo --build -d",
+    "docker:up:kafka": "docker compose up kafka --build -d"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",

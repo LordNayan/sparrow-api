@@ -41,10 +41,10 @@ services:
     networks:
       - localnet
 
-  # App
-  app:
+  # Api
+  api:
     build:
-      context: . # Path to your app's Dockerfile
+      context: .
     ports:
       - "9000:9000"
     volumes:
