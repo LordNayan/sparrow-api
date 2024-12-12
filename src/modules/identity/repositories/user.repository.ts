@@ -248,6 +248,34 @@ export class UserRepository {
     );
   }
 
+  /**
+   * Updates the user's Magic Code and timestamps in the database.
+   *
+   * @param email - The email address of the user whose Magic Code is being updated.
+   * @param magicCode - The new Magic Code to be set for the user.
+   * @param lastMagicCodeTimeStamp - The timestamp of the last Magic Code issuance.
+   * @param secondLastMagicCodeTimeStamp - The timestamp of the second-to-last Magic Code issuance.
+   * @returns A promise that resolves when the update operation is complete.
+   */
+  async updateMagicCode(
+    email: string,
+    magicCode: string,
+    lastMagicCodeTimeStamp: Date,
+    secondLastMagicCodeTimeStamp: Date,
+  ): Promise<void> {
+    await this.db.collection<User>(Collections.USER).findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          magicCode,
+          secondLastMagicCodeTimeStamp: secondLastMagicCodeTimeStamp,
+          lastMagicCodeTimeStamp: lastMagicCodeTimeStamp,
+          magicCodeTimeStamp: new Date(),
+        },
+      },
+    );
+  }
+
   async expireVerificationCode(email: string): Promise<void> {
     await this.db.collection<User>(Collections.USER).findOneAndUpdate(
       { email },
@@ -286,6 +314,28 @@ export class UserRepository {
         $set: {
           isEmailVerified: true,
           emailVerificationCode: "",
+        },
+      },
+    );
+  }
+
+  /**
+   * Updates the Magic Code status of a user in the database.
+   * This method clears the Magic Code and related timestamps, and marks the email as verified.
+   *
+   * @param email - The email address of the user whose Magic Code status is being updated.
+   * @returns A promise that resolves when the update operation is complete.
+   */
+  async updateUserMagicCodeStatus(email: string): Promise<void> {
+    await this.db.collection<User>(Collections.USER).findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          magicCode: "",
+          magicCodeTimeStamp: null,
+          lastMagicCodeTimeStamp: null,
+          secondLastMagicCodeTimeStamp: null,
+          isEmailVerified: true,
         },
       },
     );
