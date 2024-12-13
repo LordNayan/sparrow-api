@@ -31,6 +31,7 @@ import { CreateUserMigration } from "migrations/create-test-user.migration";
   controllers: [],
   providers: [
     InsightsService,
+    CreateUserMigration,
     {
       provide: "DATABASE_CONNECTION",
       inject: [ConfigService, InsightsService],
@@ -81,7 +82,6 @@ import { CreateUserMigration } from "migrations/create-test-user.migration";
     ConsumerService,
     BlobStorageService,
     EmailService,
-    CreateUserMigration,
   ],
   exports: [
     "DATABASE_CONNECTION",
