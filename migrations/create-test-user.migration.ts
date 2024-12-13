@@ -38,6 +38,14 @@ export class CreateUserMigration implements OnModuleInit {
       const workspaceCollection = this.db.collection(Collections.WORKSPACE);
       const environmentCollection = this.db.collection(Collections.ENVIRONMENT);
 
+      // Define the user to be added
+      const newUser = {
+        email: "test_dev@gmail.com",
+        name: "dev",
+        password: createHmac("sha256", "12345678@").digest("hex"),
+        isEmailVerified: true,
+      };
+
       // Check if the user already exists
       const existingUser = await usersCollection.findOne({
         email: DEFAULT_USER.email,
@@ -60,6 +68,7 @@ export class CreateUserMigration implements OnModuleInit {
             email: DEFAULT_USER.email,
             name: DEFAULT_USER.name,
             role: TeamRole.OWNER,
+            owner: userId.toString(),
           },
         ],
       };
@@ -147,9 +156,41 @@ export class CreateUserMigration implements OnModuleInit {
         updatedBy: userId.toString(),
       };
 
-      await workspaceCollection.insertOne(workspaceData);
+      const { insertedId: workspaceId } =
+        await workspaceCollection.insertOne(workspaceData);
 
-      console.log("User created successfully:", DEFAULT_USER.email);
+      // Update workspace in team collection
+      const teamWorkspaces = [
+        { id: workspaceId.toString(), name: "Test Workspace" },
+      ];
+
+      const updateTeamParams = {
+        workspaces: teamWorkspaces,
+      };
+
+      await teamsCollection.updateOne(
+        { _id: teamId },
+        { $set: updateTeamParams },
+      );
+
+      // Update workspace in user collection
+      const updateUserParams = {
+        workspaces: [
+          {
+            workspaceId: workspaceId.toString(),
+            name: "Test Workspace",
+            teamId: teamId.toString(),
+            isNewInvite: false,
+          },
+        ],
+      };
+
+      await usersCollection.updateOne(
+        { _id: userId },
+        { $set: updateUserParams },
+      );
+
+      console.log("User created successfully:", newUser.email);
     } catch (error) {
       console.error("Error during migration:", error);
     }
