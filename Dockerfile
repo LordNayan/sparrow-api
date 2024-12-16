@@ -36,6 +36,7 @@ RUN mkdir -p /app/logs && chown -R node:node /app
 # Copy the bundled code from the builder stage
 COPY --from=builder --chown=node:node /app/dist ./dist
 COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/src/modules/views ./dist/src/modules/views
 
 # Use the node user from the image
 USER node
