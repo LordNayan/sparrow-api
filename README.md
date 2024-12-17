@@ -41,16 +41,16 @@ To install this project, you must have the following installed on your machine :
 
 ```bash
 # Clone the repository
-	git clone https://github.com/sparrowapp-dev/sparrow-api.git
+git clone https://github.com/sparrowapp-dev/sparrow-api.git
 
 # Move into the project directory
-	cd sparrow-api
+cd sparrow-api
 
 # Install PNPM globally
-	npm i -g pnpm
+npm i -g pnpm
 
 # Create and setup environments file
-	cp .env.example .env
+cp .env.example .env
 ```
 
 ### Docker Method

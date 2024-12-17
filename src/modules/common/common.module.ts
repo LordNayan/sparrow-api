@@ -44,6 +44,7 @@ import { CreateUserMigration } from "migrations/create-test-user.migration";
           const client = await MongoClient.connect(configService.get("db.url"));
           return client.db("sparrow");
         } catch (e) {
+          console.log("ERROR =====> ", e);
           const client = await insightsService.getClient();
           if (client) {
             client.trackException({
