@@ -81,6 +81,15 @@ To install this project, you must have the following installed on your machine :
 
 Go to http://localhost:{PORT}/api/docs
 
+### Default User for Login:
+
+Sparrow creates a default user to help you get started quickly and easily.
+
+**Login Credentials:**
+
+- **Email:** dev@sparrow.com
+- **Password:** 12345678@
+
 ### [OPTIONAL] In case you want to remove the docker services, run the following command:
 
 `pnpm docker:down`

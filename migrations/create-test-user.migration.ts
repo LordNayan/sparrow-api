@@ -9,10 +9,13 @@ import { CreateEnvironmentDto } from "@src/modules/workspace/payloads/environmen
 import { createHmac } from "crypto";
 import { Db } from "mongodb";
 
+const DEFAULT_EMAIL = "dev@sparrow.com";
+const DEFAULT_PASSWORD = "12345678@";
+
 const DEFAULT_USER = {
-  email: "test_dev@gmail.com",
+  email: DEFAULT_EMAIL,
   name: "dev",
-  password: createHmac("sha256", "12345678@").digest("hex"),
+  password: createHmac("sha256", DEFAULT_PASSWORD).digest("hex"),
   isEmailVerified: true,
 };
 
@@ -37,14 +40,6 @@ export class CreateUserMigration implements OnModuleInit {
       const teamsCollection = this.db.collection(Collections.TEAM);
       const workspaceCollection = this.db.collection(Collections.WORKSPACE);
       const environmentCollection = this.db.collection(Collections.ENVIRONMENT);
-
-      // Define the user to be added
-      const newUser = {
-        email: "test_dev@gmail.com",
-        name: "dev",
-        password: createHmac("sha256", "12345678@").digest("hex"),
-        isEmailVerified: true,
-      };
 
       // Check if the user already exists
       const existingUser = await usersCollection.findOne({
@@ -190,7 +185,10 @@ export class CreateUserMigration implements OnModuleInit {
         { $set: updateUserParams },
       );
 
-      console.log("User created successfully:", newUser.email);
+      console.log(
+        `\x1b[32m[Nest] Test User created successfully with email - \x1b[33m${DEFAULT_EMAIL}\x1b[0m \x1b[32mand password -\x1b[33m \x1b[33m${DEFAULT_PASSWORD}\x1b[0m`,
+      );
+      return;
     } catch (error) {
       console.error("Error during migration:", error);
     }
