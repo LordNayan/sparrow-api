@@ -12,7 +12,7 @@ import { TeamService } from "./services/team.service";
 import { TeamUserService } from "./services/team-user.service";
 import { TeamRepository } from "./repositories/team.repository";
 import { TeamController } from "./controllers/team.controller";
-import { GoogleStrategy } from "./strategies/google.strategy";
+import { GoogleStrategyFactory } from "./strategies/google.strategy.factory";
 import { RefreshTokenStrategy } from "./strategies/refresh-token.strategy";
 import { HubSpotService } from "./services/hubspot.service";
 
@@ -47,12 +47,15 @@ import { HubSpotService } from "./services/hubspot.service";
     TeamService,
     TeamUserService,
     TeamRepository,
-    GoogleStrategy,
+    GoogleStrategyFactory,
     HubSpotService,
   ],
   exports: [
     PassportModule.register({ defaultStrategy: "jwt" }),
-    GoogleStrategy,
+    PassportModule.register({
+      useFactory: async () =>
+        await new GoogleStrategyFactory(new ConfigService()).createStrategy(),
+    }),
     AuthService,
     UserService,
     UserRepository,
