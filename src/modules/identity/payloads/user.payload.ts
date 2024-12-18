@@ -4,6 +4,7 @@ import { UserWorkspaceDto } from "@src/modules/common/models/user.model";
 import { Type } from "class-transformer";
 import {
   IsArray,
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -86,4 +87,18 @@ export class VerifyMagiCodePayload extends EmailPayload {
   @MinLength(6)
   @IsNotEmpty()
   magicCode: string;
+}
+
+export class OccaisonalUpdatesPayload extends EmailPayload {
+  /**
+   * The occaisonal uodates status.
+   * @example true
+   */
+  @ApiProperty({
+    required: true,
+    example: true,
+  })
+  @IsNotEmpty()
+  @IsBoolean()
+  isUserAcceptedOccasionalUpdates: boolean;
 }

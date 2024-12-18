@@ -525,4 +525,26 @@ export class UserService {
     };
     return data;
   }
+
+  /**
+   * Updates the user's occasional updates subscription status.
+   *
+   * @param email - The email address of the user whose Magic Code is being updated.
+   * @param isUserAcceptedOccasionalUpdates - Boolean value wheather user accepted or not.
+   * @returns A promise that resolves when the update operation is complete.
+   */
+  async updateUserOccaisonalUpdates(
+    email: string,
+    isUserAcceptedOccasionalUpdates: boolean,
+  ): Promise<WithId<User>> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      throw new BadRequestException("User does not exist");
+    }
+    const data = await this.userRepository.updateOccaisonalUpdates(
+      email,
+      isUserAcceptedOccasionalUpdates,
+    );
+    return data.value;
+  }
 }
