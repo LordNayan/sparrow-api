@@ -20,6 +20,7 @@ import { UserService } from "../services/user.service";
 import { RegisterPayload } from "../payloads/register.payload";
 import {
   EmailPayload,
+  OccaisonalUpdatesPayload,
   UpdateUserDto,
   VerifyMagiCodePayload,
 } from "../payloads/user.payload";
@@ -360,6 +361,40 @@ export class UserController {
       "Magic Code Verified Successfully",
       HttpStatusCode.OK,
       data,
+    );
+    return res.status(responseData.httpStatusCode).send(responseData);
+  }
+
+  /**
+   * Updates the occasional updates status for a user in the database.
+   *
+   * @param updatesPayload - The payload containing the user's email and their occasional updates preference.
+   * @param res - The Fastify reply object used to send the HTTP response.
+   * @returns A promise resolving to a Fastify reply with the update status.
+   */
+  @Post("update-occasional-updates-status")
+  @ApiOperation({
+    summary: "Update the occasional updates.",
+    description: "Updates the occasional updates status in user model.",
+  })
+  async updateUserOccasionalUpdatesStatus(
+    @Body() updatesPayload: OccaisonalUpdatesPayload,
+    @Res() res: FastifyReply,
+  ) {
+    const data = await this.userService.updateUserOccaisonalUpdates(
+      updatesPayload.email,
+      updatesPayload.isUserAcceptedOccasionalUpdates,
+    );
+    const response = {
+      name: data.name,
+      email: data.email,
+      isUserAcceptedOccasionalUpdates:
+        updatesPayload.isUserAcceptedOccasionalUpdates,
+    };
+    const responseData = new ApiResponseService(
+      "Updated Status Successfully",
+      HttpStatusCode.OK,
+      response,
     );
     return res.status(responseData.httpStatusCode).send(responseData);
   }
