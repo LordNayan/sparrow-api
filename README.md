@@ -52,7 +52,7 @@ npm i -g pnpm
 # Tweak environment variables in .env.example by following the below mentioned guide
 [Environment Variables](./docs/ENV.md)
 
-# Create and setup environments file
+# Create .env file from the tweaked .env.example file
 cp .env.example .env
 ```
 

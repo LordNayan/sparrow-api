@@ -4,7 +4,7 @@
 
    `SMTP_ENABLED=false`
 
-In can you set the above env to false, you wont be able to get verification code to create new users. You can use the following default email/password combination:
+In case you set the above env to 'false', you wont be able to get verification code to create new users, reset password or any other in-app emails. You can use the following default email/password combination to login to Sparrow:
 
     Email - dev@sparrow.com <br />
     Password - 12345678@
