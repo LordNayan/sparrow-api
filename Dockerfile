@@ -1,3 +1,5 @@
+# =========Setup Prerequisites Stage=========
+
 FROM node:18-alpine AS deps
 WORKDIR /app
 
@@ -10,9 +12,10 @@ RUN apk update && apk add --no-cache python3 py3-pip build-base gcc
 # Install dependencies with the preferred package manager
 RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
+# =========Build Stage=========
+
 FROM node:18-alpine AS builder
 WORKDIR /app
-
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy the rest of the files
@@ -26,6 +29,8 @@ ENV NODE_ENV production
 
 # Re-run install only for production dependencies
 RUN corepack enable pnpm && pnpm i --frozen-lockfile --prod
+
+# =========Runtime Stage=========
 
 FROM node:18-alpine AS runner
 WORKDIR /app

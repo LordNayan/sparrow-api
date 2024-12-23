@@ -13,16 +13,14 @@ import { Team } from "@src/modules/common/models/team.model";
 import { ProducerService } from "@src/modules/common/services/kafka/producer.service";
 import { TeamRole } from "@src/modules/common/enum/roles.enum";
 import { TeamService } from "./team.service";
-import * as nodemailer from "nodemailer";
-import hbs = require("nodemailer-express-handlebars");
 import { ConfigService } from "@nestjs/config";
-import path = require("path");
 import { EmailService } from "@src/modules/common/services/email.service";
 /**
  * Team User Service
  */
 @Injectable()
 export class TeamUserService {
+  private smtpEnabled: string;
   constructor(
     private readonly teamRepository: TeamRepository,
     private readonly contextService: ContextService,
@@ -31,7 +29,9 @@ export class TeamUserService {
     private readonly teamService: TeamService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
-  ) {}
+  ) {
+    this.smtpEnabled = this.configService.get("app.smtpEnabled");
+  }
 
   async HasPermissionToRemove(
     payload: CreateOrUpdateTeamUserDto,
@@ -67,6 +67,9 @@ export class TeamUserService {
   }
 
   async inviteUserInTeamEmail(payload: TeamInviteMailDto, role: string) {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const currentUser = await this.contextService.get("user");
     const transporter = this.emailService.createTransporter();
     const promiseArray = [];
@@ -620,6 +623,9 @@ export class TeamUserService {
     OwnerName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
 
     const mailOptions = {
@@ -657,6 +663,9 @@ export class TeamUserService {
     OwnerName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
 
     const mailOptions = {
@@ -692,6 +701,9 @@ export class TeamUserService {
     OwnerName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
 
     const mailOptions = {
@@ -726,6 +738,9 @@ export class TeamUserService {
     OwnerName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
 
     const mailOptions = {
@@ -763,6 +778,9 @@ export class TeamUserService {
     userName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
 
     const mailOptions = {
@@ -801,6 +819,9 @@ export class TeamUserService {
     userName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
 
     const mailOptions = {

@@ -59,6 +59,7 @@ import { TestflowInfoDto } from "@src/modules/common/models/testflow.model";
  */
 @Injectable()
 export class WorkspaceService {
+  private smtpEnabled: string;
   constructor(
     private readonly workspaceRepository: WorkspaceRepository,
     private readonly contextService: ContextService,
@@ -69,7 +70,9 @@ export class WorkspaceService {
     private readonly configService: ConfigService,
     private readonly producerService: ProducerService,
     private readonly emailService: EmailService,
-  ) {}
+  ) {
+    this.smtpEnabled = this.configService.get("app.smtpEnabled");
+  }
 
   async get(id: string): Promise<WithId<Workspace>> {
     const data = await this.workspaceRepository.get(id);
@@ -589,6 +592,9 @@ export class WorkspaceService {
     payload: WorkspaceInviteMailDto,
     userRole: string,
   ) {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const currentUser = await this.contextService.get("user");
     const transporter = this.emailService.createTransporter();
 
@@ -864,6 +870,9 @@ export class WorkspaceService {
     teamName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
 
     const mailOptions = {
@@ -905,6 +914,9 @@ export class WorkspaceService {
     workspaceName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
     const mailOptions = {
       from: this.configService.get("app.senderEmail"),
@@ -945,6 +957,9 @@ export class WorkspaceService {
     workspaceName: string,
     email: string,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
 
     const mailOptions = {
@@ -1079,6 +1094,9 @@ export class WorkspaceService {
   async inviteUsersWithRolesInWorkspaceEmail(
     payload: WorkspaceInviteMailWIthRoleDto,
   ) {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const currentUser = await this.contextService.get("user");
     // Create an email transporter instance
     const transporter = this.emailService.createTransporter();

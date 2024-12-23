@@ -48,4 +48,8 @@ export class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   KAFKA_BROKER: string;
+
+  @IsString()
+  @IsNotEmpty()
+  SMTP_ENABLED: string;
 }

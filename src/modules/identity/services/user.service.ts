@@ -32,6 +32,7 @@ export interface IGenericMessageBody {
  */
 @Injectable()
 export class UserService {
+  private smtpEnabled: string;
   constructor(
     private readonly userRepository: UserRepository,
     private readonly configService: ConfigService,
@@ -40,7 +41,9 @@ export class UserService {
     private readonly contextService: ContextService,
     private readonly emailService: EmailService,
     private readonly hubspotService: HubSpotService,
-  ) {}
+  ) {
+    this.smtpEnabled = this.configService.get("app.smtpEnabled");
+  }
 
   /**
    * Fetches a user from database by UUID
@@ -155,6 +158,9 @@ export class UserService {
   async sendVerificationEmail(
     resetPasswordDto: ResetPasswordPayload,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const userDetails = await this.getUserByEmail(
       resetPasswordDto.email.toLowerCase(),
     );
@@ -203,6 +209,9 @@ export class UserService {
   async sendUserVerificationEmail(
     verificationPayload: VerificationPayload,
   ): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const userDetails = await this.getUserByEmail(
       verificationPayload.email.toLowerCase(),
     );
@@ -253,6 +262,9 @@ export class UserService {
     const userDetails = await this.getUserByEmail(
       emailPayload.email.toLowerCase(),
     );
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     if (
       userDetails &&
       userDetails?.magicCodeTimeStamp &&
@@ -302,6 +314,9 @@ export class UserService {
   }
 
   async sendWelcomeEmail(earlyAccessDto: EarlyAccessPayload): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = nodemailer.createTransport({
       host: this.configService.get("app.mailHost"),
       port: this.configService.get("app.mailPort"),
@@ -471,6 +486,9 @@ export class UserService {
   }
 
   async sendSignUpEmail(firstname: string, email: string): Promise<void> {
+    if (this.smtpEnabled != "true") {
+      return;
+    }
     const transporter = this.emailService.createTransporter();
     const mailOptions = {
       from: this.configService.get("app.senderEmail"),
