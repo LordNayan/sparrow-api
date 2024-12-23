@@ -121,6 +121,10 @@ export class User {
 
   @IsBoolean()
   @IsOptional()
+  isUserAcceptedOccasionalUpdates?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
   isCoolDownActive?: boolean;
 }
 

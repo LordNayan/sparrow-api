@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { Db, InsertOneResult, ObjectId, WithId } from "mongodb";
+import { Db, InsertOneResult, ModifyResult, ObjectId, WithId } from "mongodb";
 import { Collections } from "@src/modules/common/enum/database.collection.enum";
 import { createHmac } from "crypto";
 import { RegisterPayload } from "../payloads/register.payload";
@@ -274,6 +274,29 @@ export class UserRepository {
         },
       },
     );
+  }
+
+  /**
+   * Updates the user's occaisonal updates status in database.
+   *
+   * @param email - The email address of the user whose Magic Code is being updated.
+   * @param isUserAcceptedOccasionalUpdates - Boolean value wheather user accepted or not.
+   * @returns A promise that resolves when the update operation is complete.
+   */
+  async updateOccaisonalUpdates(
+    email: string,
+    isUserAcceptedOccasionalUpdates: boolean,
+  ): Promise<ModifyResult<User>> {
+    const data = this.db.collection<User>(Collections.USER).findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          isUserAcceptedOccasionalUpdates,
+        },
+      },
+      { projection: { password: 0 } },
+    );
+    return data;
   }
 
   async expireVerificationCode(email: string): Promise<void> {
