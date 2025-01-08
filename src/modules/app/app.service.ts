@@ -453,6 +453,7 @@ export class AppService {
             AuthModeEnum["Basic Auth"];
         }
       }
+      transformedObject.request.headers.push(keyValueDefaultObj);
     }
 
     //Assign default values
