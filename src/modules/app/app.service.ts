@@ -230,6 +230,7 @@ export class AppService {
       transformedObject.request.url = url;
       transformedObject.request.queryParams = queryParams;
     }
+    let isFormData = false;
 
     // Handle request body based on Content-Type
     if (requestObject?.data || requestObject?.files) {
@@ -238,6 +239,7 @@ export class AppService {
         requestObject.headers["Content-Type"] ||
         "";
       if (contentType.startsWith("multipart/form-data")) {
+        isFormData = true;
         const boundary = contentType.split("boundary=")[1];
         if (contentType.includes("boundary=")) {
           const formDataParts = requestObject.data.split(`--${boundary}\r\n`);
@@ -275,11 +277,10 @@ export class AppService {
               ) &&
               value.startsWith("/")
             ) {
-              transformedObject.request.body.formdata.file.push({
+              transformedObject.request.body.formdata.text.push({
                 key,
-                value,
+                value: "",
                 checked: true,
-                base: `${value}`,
               });
             }
           }
@@ -297,11 +298,10 @@ export class AppService {
               Object.entries(bodyData).forEach(([key, value]) => {
                 // Check if the value appears to be a file path
                 if (typeof value === "string" && value.startsWith("/")) {
-                  transformedObject.request.body.formdata.file.push({
+                  transformedObject.request.body.formdata.text.push({
                     key,
-                    value,
+                    value: "",
                     checked: true,
-                    base: value,
                   });
                 } else {
                   transformedObject.request.body.formdata.text.push({
@@ -320,11 +320,10 @@ export class AppService {
               pairs.forEach((pair: any) => {
                 const [key, value] = pair.split("=").map(decodeURIComponent);
                 if (value && value.startsWith("/")) {
-                  transformedObject.request.body.formdata.file.push({
+                  transformedObject.request.body.formdata.text.push({
                     key,
-                    value,
+                    value: "",
                     checked: true,
-                    base: value,
                   });
                 } else {
                   transformedObject.request.body.formdata.text.push({
@@ -389,17 +388,20 @@ export class AppService {
       // If files is an array of objects
       if (Array.isArray(requestObject.files)) {
         requestObject.files.forEach((fileObj: any) => {
-          transformedObject.request.body.formdata.file.push(fileObj);
+          transformedObject.request.body.formdata.text.push({
+            key: fileObj?.key || "",
+            value: "",
+            checked: true,
+          });
         });
       }
       // If files is an object with key-value pairs
       else {
         for (const [key, filename] of Object.entries(requestObject.files)) {
-          transformedObject.request.body.formdata.file.push({
+          transformedObject.request.body.formdata.text.push({
             key,
-            value: filename,
+            value: "",
             checked: true,
-            base: `${filename}`,
           });
         }
       }
@@ -408,7 +410,9 @@ export class AppService {
     // Handle headers and populate auth details
     if (requestObject.headers) {
       for (const [key, value] of Object.entries(requestObject.headers)) {
-        transformedObject.request.headers.push({ key, value, checked: true });
+        if (isFormData && key !== "Content-Type") {
+          transformedObject.request.headers.push({ key, value, checked: true });
+        }
 
         // Check for Bearer token
         if (
