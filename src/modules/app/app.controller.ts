@@ -23,7 +23,9 @@ import { ApiResponseService } from "../common/services/api-response.service";
 import { HttpStatusCode } from "../common/enum/httpStatusCode.enum";
 import { curlDto } from "./payloads/curl.payload";
 import { PostmanParserService } from "../common/services/postman.parser.service";
-
+import axios from "axios";
+import { ConfigService } from "@nestjs/config";
+import { subscribePayload } from "./payloads/subscribe.payload";
 /**
  * App Controller
  */
@@ -34,6 +36,7 @@ export class AppController {
     private parserService: ParserService,
     private appService: AppService,
     private postmanParserSerivce: PostmanParserService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get("updater/:target/:arch/:currentVersion")
@@ -212,5 +215,77 @@ export class AppController {
       kafka: isKafkaConnected ? "connected" : "disconnected",
       mongo: isMongoConnected ? "connected" : "disconnected",
     });
+  }
+
+  // Users can Subscribe to Sparrow.
+  @Post("subscribe")
+  @ApiResponse({ status: 200, description: "Subscription successful." })
+  @ApiResponse({
+    status: 400,
+    description: "Please provide Email to Subscribe.",
+  })
+  @ApiResponse({ status: 500, description: "Failed to Subscribe." })
+  async subscribeSparrow(
+    @Body() req: subscribePayload,
+    @Res() res: FastifyReply,
+  ) {
+    try {
+      const { email } = req;
+      if (!email) {
+        return res.status(HttpStatus.BAD_REQUEST).send({
+          statusCode: HttpStatus.BAD_REQUEST,
+          status: "Please provide Email to Subscribe.",
+        });
+      }
+
+      const BEEHIIV_PUBLICATION_ID = this.configService.get(
+        "docs.beehiivPublicationId",
+      );
+      const BEEHIIV_API_KEY = this.configService.get("docs.beehiivApiKey");
+
+      if (!BEEHIIV_PUBLICATION_ID || !BEEHIIV_API_KEY) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          status: "Failed to Subscribe",
+          error: "Missing Beehiiv configuration.",
+        });
+      }
+
+      const url = `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUBLICATION_ID}/subscriptions`;
+
+      const response = await axios.post(
+        url,
+        {
+          email,
+          reactivate_existing: false,
+          send_welcome_email: true,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${BEEHIIV_API_KEY}`,
+          },
+        },
+      );
+
+      return res.status(HttpStatus.OK).send({
+        statusCode: HttpStatus.OK,
+        status: "Subscription successful.",
+        data: response.data,
+      });
+    } catch (error) {
+      const statusCode =
+        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR;
+      const errorMessage =
+        error.response?.data?.error ||
+        error.message ||
+        "An error occurred while subscribing.";
+
+      return res.status(statusCode).send({
+        statusCode,
+        status: "Failed to Subscribe",
+        error: errorMessage,
+      });
+    }
   }
 }
