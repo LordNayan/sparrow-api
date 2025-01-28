@@ -15,6 +15,7 @@ import {
 import { ContextService } from "../common/services/context.service";
 import { Kafka } from "kafkajs";
 import { MongoClient } from "mongodb";
+import axios from "axios";
 
 /**
  * Application Service
@@ -524,6 +525,49 @@ export class AppService {
     } catch (error) {
       console.error("MongoDB connection error:", error);
       return false;
+    }
+  }
+
+  async subscribeToBeehiiv(email: string): Promise<any> {
+    if (!email) {
+      throw {
+        statusCode: 400,
+        message: "Please provide Email to Subscribe.",
+      };
+    }
+    const beehiivPublicationId = this.config.get("docs.beehiivPublicationId");
+    const beehiivApiKey = this.config.get("docs.beehiivApiKey");
+    if (!beehiivPublicationId || !beehiivApiKey) {
+      throw {
+        statusCode: 500,
+        message: "Missing Beehiiv configuration.",
+      };
+    }
+    const url = `https://api.beehiiv.com/v2/publications/${beehiivPublicationId}/subscriptions`;
+    try {
+      const response = await axios.post(
+        url,
+        {
+          email,
+          reactivate_existing: false,
+          send_welcome_email: true,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${beehiivApiKey}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      const statusCode = error.response?.status || 500;
+      const errorMessage =
+        error.response?.data?.error || error.message || "Failed to Subscribe";
+      throw {
+        statusCode,
+        message: errorMessage,
+      };
     }
   }
 }
