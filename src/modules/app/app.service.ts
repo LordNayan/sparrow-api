@@ -567,7 +567,7 @@ export class AppService {
           "An error occurred while subscribing.",
         );
       } else {
-        throw new InternalServerErrorException("An unexpected error occurred.");
+        throw new BadRequestException("Request Failed");
       }
     }
   }
