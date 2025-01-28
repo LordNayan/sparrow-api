@@ -226,22 +226,13 @@ export class AppController {
     @Body() req: subscribePayload,
     @Res() res: FastifyReply,
   ) {
-    try {
-      const { email } = req;
-      const data = await this.appService.subscribeToBeehiiv(email);
-      return res.status(HttpStatus.OK).send({
-        statusCode: HttpStatus.OK,
-        status: "Subscription successful.",
-        data,
-      });
-    } catch (error) {
-      return res
-        .status(error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({
-          statusCode: error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-          status: "Failed to Subscribe",
-          error: error.message || "An error occurred while subscribing.",
-        });
-    }
+    const { email } = req;
+    const data = await this.appService.subscribeToBeehiiv(email);
+    const responseData = {
+      message: "Success",
+      httpStatusCode: HttpStatus.OK,
+      data,
+    };
+    return res.status(HttpStatus.OK).send(responseData);
   }
 }

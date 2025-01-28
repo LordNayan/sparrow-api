@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { HttpStatusCode } from "../common/enum/httpStatusCode.enum";
 import { UpdaterJsonResponsePayload } from "./payloads/updaterJson.payload";
@@ -528,20 +532,17 @@ export class AppService {
     }
   }
 
+  /**Users can subscribe to Sparrow through email. This is for Sparrow-docs.*/
   async subscribeToBeehiiv(email: string): Promise<any> {
     if (!email) {
-      throw {
-        statusCode: 400,
-        message: "Please provide Email to Subscribe.",
-      };
+      throw new BadRequestException("Please provide an email to subscribe.");
     }
     const beehiivPublicationId = this.config.get("docs.beehiivPublicationId");
     const beehiivApiKey = this.config.get("docs.beehiivApiKey");
     if (!beehiivPublicationId || !beehiivApiKey) {
-      throw {
-        statusCode: 500,
-        message: "Missing Beehiiv configuration.",
-      };
+      throw new InternalServerErrorException(
+        "Beehiiv configuration is missing.",
+      );
     }
     const url = `https://api.beehiiv.com/v2/publications/${beehiivPublicationId}/subscriptions`;
     try {
@@ -561,13 +562,13 @@ export class AppService {
       );
       return response.data;
     } catch (error) {
-      const statusCode = error.response?.status || 500;
-      const errorMessage =
-        error.response?.data?.error || error.message || "Failed to Subscribe";
-      throw {
-        statusCode,
-        message: errorMessage,
-      };
+      if (error.response?.status === 500) {
+        throw new InternalServerErrorException(
+          "An error occurred while subscribing.",
+        );
+      } else {
+        throw new InternalServerErrorException("An unexpected error occurred.");
+      }
     }
   }
 }
