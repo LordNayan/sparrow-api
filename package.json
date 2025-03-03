@@ -68,6 +68,7 @@
     "gravatar": "1.8.2",
     "husky": "^8.0.3",
     "js-yaml": "^4.1.0",
+    "jwks-rsa": "^3.1.0",
     "kafkajs": "^2.2.4",
     "mongodb": "^5.7.0",
     "nest-access-control": "2.2.0",
