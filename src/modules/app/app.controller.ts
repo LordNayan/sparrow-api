@@ -116,16 +116,32 @@ export class AppController {
     description: "Provided OAPI is a valid specification.",
   })
   @ApiResponse({ status: 400, description: "Provided OAPI is invalid." })
-  async validateOAPI(@Req() request: FastifyRequest, @Res() res: FastifyReply) {
+  async validateOAPI(
+    @Req() request: ExtendedFastifyRequest,
+    @Res() res: FastifyReply,
+  ) {
     try {
       await this.parserService.validateOapi(request);
       return res
         .status(HttpStatus.OK)
         .send({ valid: true, msg: "Provided OAPI is a valid specification." });
     } catch (error) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send({ valid: false, msg: "Provided OAPI is invalid." });
+      try {
+        const user = request.user;
+        await this.postmanParserSerivce.parsePostmanCollection(
+          request.body,
+          user,
+        );
+        return res.status(HttpStatus.OK).send({
+          valid: true,
+          msg: "Provided Postman Collection is valid.",
+          type: "POSTMAN",
+        });
+      } catch (error) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ valid: false, msg: "Provided OAPI is invalid." });
+      }
     }
   }
 
@@ -162,7 +178,7 @@ export class AppController {
    * @throws {HttpStatus.BAD_REQUEST} If both OAPI and Postman formats are invalid.
    */
   async validateFile(
-    @Req() request: FastifyRequest,
+    @Req() request: ExtendedFastifyRequest,
     @Res() res: FastifyReply,
     @Req() req: ExtendedFastifyRequest,
   ) {

@@ -19,7 +19,7 @@ import { Branch } from "../models/branch.model";
 import { FastifyRequest } from "fastify";
 import axios from "axios";
 import * as yml from "js-yaml";
-import { DecodedUserObject } from "@src/types/fastify";
+import { DecodedUserObject, ExtendedFastifyRequest } from "@src/types/fastify";
 interface ActiveSyncResponsePayload {
   collection: WithId<Collection>;
   existingCollection: boolean;
@@ -313,7 +313,7 @@ export class ParserService {
     );
   }
 
-  async validateOapi(request: FastifyRequest): Promise<void> {
+  async validateOapi(request: ExtendedFastifyRequest): Promise<void> {
     try {
       let data: any;
       const url = request.headers["x-oapi-url"] || null;
