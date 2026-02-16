@@ -68,6 +68,11 @@ interface FormDataFileEntry {
   base: string;
 }
 
+export enum OAuth2GrantType {
+  AUTHORIZATION_CODE = "Authorization Code",
+  CLIENT_CREDENTIALS = "Client Credentials",
+}
+
 export class Auth {
   bearerToken?: string;
   basicAuth?: {
@@ -78,6 +83,18 @@ export class Auth {
     authKey: string;
     authValue: string | unknown;
     addTo: AddTo;
+  };
+  oauth2?: {
+    grantType?: OAuth2GrantType;
+    headerPrefix?: string;
+    callbackUrl?: string;
+    clientId?: string;
+    clientSecret?: string;
+    authUrl?: string;
+    accessTokenUrl?: string;
+    scope?: string;
+    state?: string;
+    accessToken?: string;
   };
 }
 

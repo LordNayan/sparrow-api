@@ -76,6 +76,7 @@ export enum CollectionAuthModeEnum {
   "API Key" = "API Key",
   "Bearer Token" = "Bearer Token",
   "Basic Auth" = "Basic Auth",
+  "OAuth 2.0" = "OAuth 2.0",
 }
 
 export enum CollectionTypeEnum {
@@ -89,6 +90,7 @@ export enum AuthModeEnum {
   "API Key" = "API Key",
   "Bearer Token" = "Bearer Token",
   "Basic Auth" = "Basic Auth",
+  "OAuth 2.0" = "OAuth 2.0",
 }
 
 export enum PostmanAuthModeEnum {

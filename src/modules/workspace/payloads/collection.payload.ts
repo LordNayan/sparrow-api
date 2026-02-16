@@ -25,6 +25,12 @@ export enum AddTo {
   Header = "Header",
   QueryParameter = "Query Parameter",
 }
+
+export enum OAuth2GrantTypeDto {
+  AUTHORIZATION_CODE = "Authorization Code",
+  CLIENT_CREDENTIALS = "Client Credentials",
+}
+
 export class BasicAuthDto {
   @IsString()
   username: string;
@@ -44,6 +50,48 @@ export class ApiKeyDto {
   addTo: AddTo;
 }
 
+export class OAuth2Dto {
+  @IsEnum(OAuth2GrantTypeDto)
+  @IsOptional()
+  grantType?: OAuth2GrantTypeDto;
+
+  @IsString()
+  @IsOptional()
+  headerPrefix?: string;
+
+  @IsString()
+  @IsOptional()
+  callbackUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  clientId?: string;
+
+  @IsString()
+  @IsOptional()
+  clientSecret?: string;
+
+  @IsString()
+  @IsOptional()
+  authUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  accessTokenUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  scope?: string;
+
+  @IsString()
+  @IsOptional()
+  state?: string;
+
+  @IsString()
+  @IsOptional()
+  accessToken?: string;
+}
+
 export class AuthContent {
   @ValidateNested()
   @IsOptional()
@@ -58,6 +106,11 @@ export class AuthContent {
   @IsOptional()
   @Type(() => ApiKeyDto)
   apiKey?: ApiKeyDto;
+
+  @ValidateNested()
+  @IsOptional()
+  @Type(() => OAuth2Dto)
+  oauth2?: OAuth2Dto;
 }
 
 export class AuthProfiles {
