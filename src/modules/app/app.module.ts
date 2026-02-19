@@ -26,7 +26,6 @@ import { AppRepository } from "./app.repository";
 import { SentryModule } from "@sentry/nestjs/setup";
 import { UserAdminModule } from "../user-admin/user-admin.module";
 import { BillingModule } from "../billing/billing.module";
-import { OAuth2TestModule } from "../oauth2-test/oauth2-test.module";
 
 @Module({
   imports: [
@@ -67,7 +66,6 @@ import { OAuth2TestModule } from "../oauth2-test/oauth2-test.module";
     BillingModule.register(),
     CommonModule,
     ProxyModule,
-    OAuth2TestModule,
   ],
   controllers: [AppController],
   providers: [
